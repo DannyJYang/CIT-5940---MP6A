@@ -62,22 +62,18 @@ public class InvertedIndex {
      */
     // addDocument
     public void addDocument(int docID, String text) {
-
-        if (text == null || text.isEmpty()) {
+        if (text == null || text.isBlank()) {
             return;
         }
 
         String[] words = tokenize(text);
 
         for (String word : words) {
-            if (word.isEmpty() || STOP_WORDS.contains(word)) {
-                continue;
+            if (!word.isEmpty() && !STOP_WORDS.contains(word)) {
+                root = insert(root, word, docID);
+
             }
-
-            root = insert(root, word, docID);
         }
-
-        return;
     }
 
     private String[] tokenize(String text) {
@@ -129,6 +125,57 @@ public class InvertedIndex {
     */
     //search
     public Set<Integer> search(String query) {
+        Set<Integer> result = new HashSet<>();
+
+        if (query == null || query.isBlank() || root == null) {
+            return result;
+        }
+
+        String[] words = tokenize(query);
+        boolean found = false;
+
+        for (String word : words) {
+            if (word.isEmpty() || STOP_WORDS.contains(word)) {
+                continue;
+            }
+
+            BSTNode node = findNode(root, word);
+
+            if (node == null) {
+                result.clear();
+                return result;
+            }
+
+            if(!found){
+                result.addAll(node.documentIDs);
+                found = true;
+            } else {
+                result.retainAll(node.documentIDs);
+            }
+
+            if(result.isEmpty()) {
+                return result;
+            }
+        }
+
+        return result;
+    }
+
+    private BSTNode findNode(BSTNode node, String word) {
+        BSTNode currentNode = node;
+
+        while (currentNode != null) {
+            int comparison = word.compareTo(currentNode.keyWord);
+
+            if (comparison < 0) {
+                currentNode = currentNode.left;
+            } else if (comparison > 0) {
+                currentNode = currentNode.right;
+            } else {
+                return currentNode;
+            }
+        }
+
         return null;
     }
 

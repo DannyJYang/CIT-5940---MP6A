@@ -23,7 +23,38 @@ public class InvertedIndexTest {
     public void testAddDocument(){
         // Add your test cases for the addDocument method here
         // Ensure that you have at least 3 distinct and non-trivial test cases
-        assertEquals(1, 1, "This is a placeholder test case. Replace with actual test cases for AddDocument.");
+//        assertEquals(1, 1, "This is a placeholder test case. Replace with actual test cases for AddDocument.");
+        whenAddDocument_andNullText_thenNothing();
+        whenAddDocument_thenAddDocumentToIndex();
+    }
+
+    private void whenAddDocument_andNullText_thenNothing() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+        InvertedIndex index2 = new InvertedIndex();
+        InvertedIndex index3 = new InvertedIndex();
+
+        // ACT
+        assertDoesNotThrow(() -> index.addDocument(1, null));
+        assertDoesNotThrow(() -> index2.addDocument(1, ""));
+        assertDoesNotThrow(() -> index3.addDocument(1, "                   "));
+
+        // ASSERT
+        assertEquals(null, index.getIndex());
+        assertEquals(null, index2.getIndex());
+        assertEquals(null, index3.getIndex());
+    }
+
+    @Test
+    public void whenAddDocument_thenAddDocumentToIndex() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+
+        // ACT
+        index.addDocument(1, "This is a test document");
+
+        // ASSERT
+
     }
 
     @Test
