@@ -1,4 +1,4 @@
-/*
+package edu.upenn.cit5940;/*
  * I attest that the code in this file is entirely my own except for the starter
  * code provided with the assignment and the following exceptions:
  * <Enter all external resources and collaborations here. Note external code may
@@ -7,14 +7,11 @@
  * university code of academic integrity:
  *  https://catalog.upenn.edu/pennbook/code-of-academic-integrity/ >
  * Signed,
- * Author: YOUR NAME HERE
- * Penn email: <YOUR-EMAIL-HERE@seas.upenn.edu>
- * Date: YYYY-MM-DD
+ * Author: Danny Yang
+ * Penn email: dyang98@seas.upenn.edu
+ * Date: 2026-06-14
  */
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 
 public class Main {

@@ -1,4 +1,4 @@
-/*
+package edu.upenn.cit5940;/*
  * I attest that the code in this file is entirely my own except for the starter
  * code provided with the assignment and the following exceptions:
  * <Enter all external resources and collaborations here. Note external code may
@@ -7,9 +7,9 @@
  * university code of academic integrity:
  *  https://catalog.upenn.edu/pennbook/code-of-academic-integrity/ >
  * Signed,
- * Author: YOUR NAME HERE
- * Penn email: <YOUR-EMAIL-HERE@seas.upenn.edu>
- * Date: YYYY-MM-DD
+ * Author: Danny Yang
+ * Penn email: dyang98@seas.upenn.edu
+ * Date: 2026-06-14
  */
 
 //import any classes you will need
@@ -62,7 +62,63 @@ public class InvertedIndex {
      */
     // addDocument
     public void addDocument(int docID, String text) {
+
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+
+        String[] words = tokenize(text);
+
+        for (String word : words) {
+            if (word.isEmpty() || STOP_WORDS.contains(word)) {
+                continue;
+            }
+
+            root = insert(root, word, docID);
+        }
+
         return;
+    }
+
+    private String[] tokenize(String text) {
+        if (text == null || text.isBlank()) {
+            return new String[0];
+        }
+
+        text = text.toLowerCase().replaceAll("[^a-z0-9\\s-]", " ");
+        text = text.replaceAll("^-+", "");
+        text = text.replaceAll("-+$", "");
+        text = text.replaceAll("\\s-+", " ");
+        text = text.replaceAll("-+\\s", " ");
+        text = text.trim();
+
+        if (text.isEmpty()) {
+            return new String[0];
+        }
+
+        return text.split("\\s+");
+    }
+
+    private BSTNode insert(BSTNode node, String word, int docID) {
+        // The correct insertion location was found
+        if (node == null) {
+            return new BSTNode(word, docID);
+        }
+
+        int comparison = word.compareTo(node.keyWord);
+
+        if (comparison < 0) {
+            // Word comes before this node
+            node.left = insert(node.left, word, docID);
+        } else if (comparison > 0) {
+            // Word comes after this node
+            node.right = insert(node.right, word, docID);
+        } else {
+            // Word already exists so add the document ID
+            node.documentIDs.add(docID);
+        }
+
+        return node;
     }
 
 
