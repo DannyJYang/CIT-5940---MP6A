@@ -13,6 +13,13 @@ package edu.upenn.cit5940;/*
  */
 
 import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
+
 
 public class Main {
 
@@ -72,17 +79,31 @@ public class Main {
         // file path to CSV file
         String csvFilePath = "all_articles_filtered_sample_10.csv";
 
-        //TODO:
-        // Option A: OpenCSV
-        // Requires: opencsv-5.12.jar
-        // To use:
-        // 1. Put JAR in lib/opencsv-5.12.jar
-        // 2. Uncomment the two imports at the top of the file
-
-
-        //TODO:
-        //Option B: Reuse your CSV Parser from HW5
-        // Replace CSVParser.parse() with your HW5 parser method
+        int docId = 1;
+        try (CSVReader reader = new CSVReaderBuilder(new FileReader(csvFilePath))
+                .withSkipLines(1)
+                .build()) {
+            String[] row;
+            while ((row = reader.readNext()) != null) {
+                // Skip malformed rows that do not contain title and body columns
+                if (row.length <= 5) {
+                    continue;
+                }
+                String title = row[4] == null ? "" : row[4].trim();
+                String body = row[5] == null ? "" : row[5].trim();
+                // Skip rows where both title and body are blank
+                if (title.isEmpty() && body.isEmpty()) {
+                    continue;
+                }
+                String combinedText = title + "\n" + body;
+                sampleArticles.put(docId, combinedText);
+                index.addDocument(docId, combinedText);
+                docId++;
+            }
+        } catch (IOException | CsvValidationException e) {
+            System.out.println("Unable to read the CSV file: " + e.getMessage());
+            return;
+        }
 
 
         // === MAIN PRINTOUT TO SCREEN ===
