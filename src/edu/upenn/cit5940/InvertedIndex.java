@@ -188,7 +188,18 @@ public class InvertedIndex {
     // to remove a document traverse the entire tree and remove the given docID from the node's set
     // remove the document ID
     public void removeDocument(int docID){
-        return;
+        removeDocumentFromTree(root, docID);
+    }
+
+    private void removeDocumentFromTree(BSTNode node, int docID) {
+        if (node == null) {
+            return;
+        }
+
+        node.documentIDs.remove(docID);
+
+        removeDocumentFromTree(node.left, docID);
+        removeDocumentFromTree(node.right, docID);
     }
 
     /*
@@ -199,16 +210,26 @@ public class InvertedIndex {
      */
     // returns the map of the inverted index
     public Map<String, Set<Integer>> getIndex() {
-       return null;
+        Map<String, Set<Integer>> index = new LinkedHashMap<>();
+        addNodesToMap(root, index);
+
+        return index;
     }
 
-    /*
-     * TODO: Implement helper methods below
-     */
+    private void addNodesToMap(BSTNode node, Map<String, Set<Integer>> index) {
+        if (node == null) {
+            return;
+        }
 
+        // Visit smaller keywords first
+        addNodesToMap(node.left, index);
 
+        // Copy the set so the returned map does not expose the BST's internal set
+        index.put(node.keyWord, new HashSet<>(node.documentIDs));
 
-
+        // Visit larger keywords last
+        addNodesToMap(node.right, index);
+    }
 
 }
 

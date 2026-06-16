@@ -40,9 +40,9 @@ public class InvertedIndexTest {
         assertDoesNotThrow(() -> index3.addDocument(1, "                   "));
 
         // ASSERT
-        assertEquals(null, index.getIndex());
-        assertEquals(null, index2.getIndex());
-        assertEquals(null, index3.getIndex());
+        assertTrue(index.getIndex().isEmpty());
+        assertTrue(index2.getIndex().isEmpty());
+        assertTrue(index3.getIndex().isEmpty());
     }
 
     @Test
