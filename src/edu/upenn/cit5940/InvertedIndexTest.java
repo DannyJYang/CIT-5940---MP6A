@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
 
+import java.util.Map;
+import java.util.Set;
+
 public class InvertedIndexTest {
     @BeforeAll
     public static void beforeAll() throws Exception{
@@ -26,6 +29,8 @@ public class InvertedIndexTest {
 //        assertEquals(1, 1, "This is a placeholder test case. Replace with actual test cases for AddDocument.");
         whenAddDocument_andNullText_thenNothing();
         whenAddDocument_thenAddDocumentToIndex();
+        whenAddDocument_withStopWords_thenSkipAndAddValidWords();
+        whenAddDocument_andDuplicateWordsWithDifferentIndex_thenReplaceIndex();
     }
 
     private void whenAddDocument_andNullText_thenNothing() {
@@ -45,16 +50,57 @@ public class InvertedIndexTest {
         assertTrue(index3.getIndex().isEmpty());
     }
 
-    @Test
-    public void whenAddDocument_thenAddDocumentToIndex() {
+    private void whenAddDocument_thenAddDocumentToIndex() {
         // ARRANGE
         InvertedIndex index = new InvertedIndex();
 
         // ACT
-        index.addDocument(1, "This is a test document");
+        //Test document are the only 2 words that pass
+        index.addDocument(1, "test document valid words");
 
         // ASSERT
+        assertEquals(4, index.getIndex().size());
+        assertTrue(index.getIndex().containsKey("test"));
+        assertTrue(index.getIndex().get("test").contains(1));
+        assertTrue(index.getIndex().containsKey("document"));
+        assertTrue(index.getIndex().get("document").contains(1));
+        assertTrue(index.getIndex().containsKey("valid"));
+        assertTrue(index.getIndex().get("valid").contains(1));
+        assertTrue(index.getIndex().containsKey("words"));
+        assertTrue(index.getIndex().get("words").contains(1));
+    }
 
+    private void whenAddDocument_withStopWords_thenSkipAndAddValidWords() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+
+        // ACT
+        //Test document are the only 2 words that pass
+        index.addDocument(1, "i me my we our ours test document so than too very");
+
+        // ASSERT
+        assertEquals(2, index.getIndex().size());
+        assertTrue(index.getIndex().containsKey("test"));
+        assertTrue(index.getIndex().get("test").contains(1));
+        assertTrue(index.getIndex().containsKey("document"));
+        assertTrue(index.getIndex().get("document").contains(1));
+        assertFalse(index.getIndex().containsKey("i"));
+    }
+
+    private void whenAddDocument_andDuplicateWordsWithDifferentIndex_thenReplaceIndex() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+
+        // ACT
+        index.addDocument(1, "test document");
+        index.addDocument(2, "test document");
+
+        Map<String, Set<Integer>> actual = index.getIndex();
+
+        // ASSERT
+        assertEquals(2, actual.size());
+        assertEquals(Set.of(1, 2), actual.get("test"));
+        assertEquals(Set.of(1, 2), actual.get("document"));
     }
 
     @Test
