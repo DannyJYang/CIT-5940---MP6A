@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -153,15 +155,110 @@ public class InvertedIndexTest {
     public void testRemoveDocument(){
         // Add your test cases for the removeDocument method here
         // Ensure that you have at least 3 distinct and non-trivial test cases
-        assertEquals(1, 1, "This is a placeholder test case. Replace with actual test cases for RemoveDocument.");
+        whenRemoveDocument_andIdDoesNotExist_thenNothing();
+        whenRemoveDocument_andIdExists_thenRemoveIdFromAllKeywords();
+        whenRemoveDocument_andKeywordHasNoRemainingIds_thenKeepKeywordNode();
+    }
+
+    private void whenRemoveDocument_andIdDoesNotExist_thenNothing() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+        index.addDocument(1, "Java Python");
+        // ACT
+        index.removeDocument(2);
+
+        // ASSERT
+        assertEquals(2, index.getIndex().size());
+        assertTrue(index.getIndex().containsKey("java"));
+        assertTrue(index.getIndex().get("java").contains(1));
+        assertTrue(index.getIndex().containsKey("python"));
+        assertTrue(index.getIndex().get("python").contains(1));
+    }
+
+    private void whenRemoveDocument_andIdExists_thenRemoveIdFromAllKeywords() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+        index.addDocument(1, "Java Python");
+        index.addDocument(2, "Java Database");
+
+        // ACT
+        index.removeDocument(1);
+
+        // ASSERT
+        Map<String, Set<Integer>> actual = index.getIndex();
+
+        //DocID 1 was removed so only docID 2 should be present
+        assertEquals(Set.of(2), actual.get("java"));
+        assertTrue(actual.get("python").isEmpty());
+        assertEquals(Set.of(2), actual.get("database"));
+    }
+
+    private void whenRemoveDocument_andKeywordHasNoRemainingIds_thenKeepKeywordNode() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+        index.addDocument(5, "Unique");
+
+        // ACT
+        index.removeDocument(5);
+
+        // ASSERT
+        Map<String, Set<Integer>> actual = index.getIndex();
+
+        assertEquals(1, actual.size());
+        assertTrue(actual.containsKey("unique"));
+        assertTrue(actual.get("unique").isEmpty());
     }
 
     @Test
     public void testGetIndex(){
         // Add your test cases for the getIndex method here
         // Ensure that you have at least 3 distinct and non-trivial test cases
-        assertEquals(1, 1, "This is a placeholder test case. Replace with actual test cases for getIndex.");
+        whenGetIndex_andTreeIsEmpty_thenReturnEmptyMap();
+        whenGetIndex_andDocumentsExist_thenReturnCorrectMap();
+        whenGetIndex_andKeywordsAreUnsorted_thenReturnAlphabeticalOrder();
     }
+
+    private void whenGetIndex_andTreeIsEmpty_thenReturnEmptyMap() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+
+        // ACT
+        Map<String, Set<Integer>> actual = index.getIndex();
+
+        // ASSERT
+        assertNotNull(actual);
+        assertTrue(actual.isEmpty());
+    }
+
+    private void whenGetIndex_andDocumentsExist_thenReturnCorrectMap() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+        index.addDocument(1, "Java Python");
+        index.addDocument(2, "Java Database");
+
+        // ACT
+        Map<String, Set<Integer>> actual = index.getIndex();
+
+        // ASSERT
+        assertEquals(3, actual.size());
+        assertEquals(Set.of(1, 2), actual.get("java"));
+        assertEquals(Set.of(1), actual.get("python"));
+        assertEquals(Set.of(2), actual.get("database"));
+    }
+
+    private void whenGetIndex_andKeywordsAreUnsorted_thenReturnAlphabeticalOrder() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+        index.addDocument(1, "zebra apple mango");
+
+        // ACT
+        Map<String, Set<Integer>> actual = index.getIndex();
+        List<String> actualKeyOrder = new ArrayList<>(actual.keySet());
+
+        // ASSERT
+        assertEquals(List.of("apple", "mango", "zebra"), actualKeyOrder);
+    }
+
 
     /*
     For Extra Credit, is OPTIONAL
