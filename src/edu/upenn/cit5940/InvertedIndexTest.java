@@ -107,7 +107,46 @@ public class InvertedIndexTest {
     public void testSearch(){
         // Add your test cases for the search method here
         // Ensure that you have at least 3 distinct and non-trivial test cases
-        assertEquals(1, 1, "This is a placeholder test case. Replace with actual test cases for Search.");
+        whenSearch_andNullQuery_thenReturnEmptySet();
+        whenSearch_andMultipleWords_thenReturnDocumentsContainingAllWords();
+        whenSearch_andOneWordDoesNotExist_thenReturnEmptySet();
+    }
+
+    private void whenSearch_andNullQuery_thenReturnEmptySet() {
+        // ARRANGE
+        // ACT
+        Set<Integer> actual = new InvertedIndex().search(null);
+
+        // ASSERT
+        assertTrue(actual.isEmpty());
+    }
+
+    private void whenSearch_andMultipleWords_thenReturnDocumentsContainingAllWords() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+        index.addDocument(1, "Java Python database");
+        index.addDocument(2, "Java Python");
+        index.addDocument(3, "Java database");
+
+        // ACT
+        //Should return doc 1 and 2 as both contain both words
+        Set<Integer> actual = index.search("JAVA, python!");
+
+        // ASSERT
+        assertEquals(Set.of(1, 2), actual);
+    }
+
+    private void whenSearch_andOneWordDoesNotExist_thenReturnEmptySet() {
+        // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+        index.addDocument(1, "Java Python");
+        index.addDocument(2, "Java database");
+
+        // ACT
+        Set<Integer> actual = index.search("java nonexistent");
+
+        // ASSERT
+        assertTrue(actual.isEmpty());
     }
 
     @Test

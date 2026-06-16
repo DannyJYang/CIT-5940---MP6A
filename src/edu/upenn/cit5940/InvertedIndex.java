@@ -117,7 +117,6 @@ public class InvertedIndex {
         return node;
     }
 
-
     /*
     This method returns a set of document IDs based on the query
     @param String query
