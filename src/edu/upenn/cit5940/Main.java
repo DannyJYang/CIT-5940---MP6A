@@ -101,7 +101,6 @@ public class Main {
                 docId++;
             }
         } catch (IOException | CsvValidationException e) {
-            System.out.println("Unable to read the CSV file: " + e.getMessage());
             return;
         }
 
