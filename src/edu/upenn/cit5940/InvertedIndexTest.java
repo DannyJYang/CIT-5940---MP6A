@@ -28,7 +28,6 @@ public class InvertedIndexTest {
     public void testAddDocument(){
         // Add your test cases for the addDocument method here
         // Ensure that you have at least 3 distinct and non-trivial test cases
-//        assertEquals(1, 1, "This is a placeholder test case. Replace with actual test cases for AddDocument.");
         whenAddDocument_andNullText_thenNothing();
         whenAddDocument_thenAddDocumentToIndex();
         whenAddDocument_withStopWords_thenSkipAndAddValidWords();
@@ -57,7 +56,6 @@ public class InvertedIndexTest {
         InvertedIndex index = new InvertedIndex();
 
         // ACT
-        //Test document are the only 2 words that pass
         index.addDocument(1, "test document valid words");
 
         // ASSERT
@@ -94,8 +92,8 @@ public class InvertedIndexTest {
         InvertedIndex index = new InvertedIndex();
 
         // ACT
-        index.addDocument(1, "test document");
-        index.addDocument(2, "test document");
+        index.addDocument(1, "test document test document");
+        index.addDocument(2, "test document test document");
 
         Map<String, Set<Integer>> actual = index.getIndex();
 
