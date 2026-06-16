@@ -116,10 +116,14 @@ public class InvertedIndexTest {
 
     private void whenSearch_andNullQuery_thenReturnEmptySet() {
         // ARRANGE
+        InvertedIndex index = new InvertedIndex();
+        index.addDocument(1, "Java Python");
+
         // ACT
-        Set<Integer> actual = new InvertedIndex().search(null);
+        Set<Integer> actual = index.search(null);
 
         // ASSERT
+        assertNotNull(actual);
         assertTrue(actual.isEmpty());
     }
 
